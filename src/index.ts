@@ -6,6 +6,8 @@ import path from "path";
 import { fileURLToPath } from "url"; // For ES module __dirname equivalent
 // Import the sample text from the resources/sample.js file. Need to use .js extension to avoid import errors.
 import { sampleText } from "./resources/sample.js";
+// @ts-ignore - Ignore TypeScript errors for Exa import
+import Exa from "exa-js";
 
 // Initialize dotenv to load environment variables from .env file
 dotenv.config();
@@ -13,6 +15,10 @@ dotenv.config();
 // Resolve the current directory in ES module context
 // In ES modules, __dirname is not available by default, so we create it
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Initialize Exa client with API key
+// @ts-ignore - Ignore TypeScript errors for Exa initialization
+const exa = new Exa(process.env.EXA_API_KEY || "");
 
 // Create a new MCP server instance
 // This is the core server that will handle all MCP protocol operations
@@ -51,6 +57,71 @@ server.tool(
     return {
       content: [{ type: "text", text: `The sum of ${a} and ${b} is ${sum}` }],
     };
+  }
+);
+
+/**
+ * Tool: exa-search
+ * Purpose: Performs web search using Exa API and returns search results with content
+ * Parameters:
+ *   - query: The search query string
+ * Returns: Search results with URLs, titles, and content
+ */
+server.tool(
+  "exa-search",
+  "Performs web search to find current, factual, or specific information not available in your knowledge. Use this tool when: 1) Needing up-to-date information beyond your training data, 2) Researching specific facts, statistics, or references, 3) Verifying claims that require external sources, or 4) Gathering detailed information on specialized topics.",
+  {
+    query: z
+      .string()
+      .describe("The search query to find information on the web"),
+  },
+  async ({ query }) => {
+    console.error(`[Tool] Performing Exa search for query: "${query}"`);
+
+    try {
+      // Perform search with content retrieval
+      const results = await exa.searchAndContents(query, {
+        numResults: 5,
+        useAutoprompt: true,
+        text: true,
+        type: "auto",
+      });
+
+      // Format the results for display
+      const formattedResults = results.results
+        .map((result: any) => {
+          return `Title: ${result.title || "No title"}\nURL: ${
+            result.url
+          }\nPublished: ${
+            result.publishedDate || "Unknown"
+          }\n\nContent Preview:\n${
+            result.text
+              ? result.text.substring(0, 300) +
+                (result.text.length > 300 ? "..." : "")
+              : "No content available"
+          }\n`;
+        })
+        .join("\n---\n\n");
+
+      const resultsText = `Found ${results.results.length} results for "${query}":\n\n${formattedResults}`;
+
+      return {
+        content: [{ type: "text", text: resultsText }],
+      };
+    } catch (error) {
+      console.error(`[Error] Exa search failed: ${error}`);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error performing web search: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          },
+        ],
+        isError: true,
+      };
+    }
   }
 );
 
