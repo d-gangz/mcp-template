@@ -130,19 +130,19 @@ server.tool(
  * Tool: meeting-agenda-generator
  * Purpose: Generates a prompt for creating a structured meeting agenda
  * Parameters:
- *   - meetingTitle: Title or purpose of the meeting
+ *   - meetingContext: Context of the meeting
  *   - participants: Who will attend the meeting
  *   - duration: Expected duration of the meeting (e.g., "30 minutes", "1 hour")
  * Returns: A prompt for generating a structured meeting agenda
- * Note: User must provide all three required variables (meetingTitle, participants, duration).
+ * Note: User must provide all three required variables (meetingContext, participants, duration).
  *       If any are missing, ask the user to provide the missing information.
  */
 server.tool(
   "meeting-agenda-generator",
   // Here is separate prompting to let the LLM know it needs to collect these information
-  "Creates a prompt for generating a structured meeting agenda. User must provide meetingTitle, participants, and duration. If any are missing, ask the user to provide them.",
+  "Creates a prompt for generating a structured meeting agenda.",
   {
-    meetingTitle: z.string().describe("Title or purpose of the meeting"),
+    meetingContext: z.string().describe("Context of the meeting"),
     participants: z
       .string()
       .describe("Who will attend the meeting (roles or names)"),
@@ -152,10 +152,10 @@ server.tool(
         "Expected duration of the meeting (e.g., '30 minutes', '1 hour')"
       ),
   },
-  async ({ meetingTitle, participants, duration }) => {
-    console.error(`[Tool] Generating meeting agenda for: ${meetingTitle}`);
+  async ({ meetingContext, participants, duration }) => {
+    console.error(`[Tool] Generating meeting agenda for: ${meetingContext}`);
 
-    const prompt = `Create a structured agenda for a "${meetingTitle}" meeting with ${participants} that will last ${duration}.
+    const prompt = `Create a structured agenda for a meeting with ${participants} that will last ${duration}. The meeting is about ${meetingContext}.
 
 The agenda should include:
 1. Meeting Objective (1-2 sentences)
