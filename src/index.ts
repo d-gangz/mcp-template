@@ -55,6 +55,58 @@ server.tool(
 );
 
 /**
+ * THIS IS AN EXAMPLE OF DYNAMIC PROMPTING
+ * Tool: meeting-agenda-generator
+ * Purpose: Generates a prompt for creating a structured meeting agenda
+ * Parameters:
+ *   - meetingTitle: Title or purpose of the meeting
+ *   - participants: Who will attend the meeting
+ *   - duration: Expected duration of the meeting (e.g., "30 minutes", "1 hour")
+ * Returns: A prompt for generating a structured meeting agenda
+ * Note: User must provide all three required variables (meetingTitle, participants, duration).
+ *       If any are missing, ask the user to provide the missing information.
+ */
+server.tool(
+  "meeting-agenda-generator",
+  // Here is separate prompting to let the LLM know it needs to collect these information
+  "Creates a prompt for generating a structured meeting agenda. User must provide meetingTitle, participants, and duration. If any are missing, ask the user to provide them.",
+  {
+    meetingTitle: z.string().describe("Title or purpose of the meeting"),
+    participants: z
+      .string()
+      .describe("Who will attend the meeting (roles or names)"),
+    duration: z
+      .string()
+      .describe(
+        "Expected duration of the meeting (e.g., '30 minutes', '1 hour')"
+      ),
+  },
+  async ({ meetingTitle, participants, duration }) => {
+    console.error(`[Tool] Generating meeting agenda for: ${meetingTitle}`);
+
+    const prompt = `Create a structured agenda for a "${meetingTitle}" meeting with ${participants} that will last ${duration}.
+
+The agenda should include:
+1. Meeting Objective (1-2 sentences)
+2. Discussion Topics (prioritized list with time allocations)
+3. Required Preparation for Participants
+4. Expected Outcomes/Deliverables
+5. Next Steps and Action Items Template
+
+Format the agenda to be clear, concise, and actionable. Ensure the timing works within the ${duration} constraint.`;
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: prompt,
+        },
+      ],
+    };
+  }
+);
+
+/**
  * Prompt: story-idea-generator
  * Purpose: Generates creative story ideas based on user-provided topics and genre preferences
  * Parameters:
