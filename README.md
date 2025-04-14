@@ -9,6 +9,7 @@ This template provides a foundation for building MCP servers that expose data an
 - Expose data through **Resources** (like GET endpoints)
 - Provide functionality through **Tools** (like POST endpoints)
 - Define interaction patterns through **Prompts** (reusable templates)
+- Enable **Dynamic Prompting** using tools to extract structured data from natural language input before generating a tailored prompt (see `meeting-agenda-generator` example in `src/index.ts`).
 
 ## Getting Started
 
@@ -27,6 +28,11 @@ cd my-mcp-server
 # Install dependencies
 npm install
 ```
+## Development Guidelines
+
+- **Use the Cursor Rule:** When developing tools, prompts, or resources for this server, reference the `@mcp-general.mdc` Cursor rule. It contains detailed instructions, conventions, and code examples tailored for MCP server development. This will help ensure consistency and guide the AI assistant in generating correct code.
+- **Build Before Running:** Always run `npm run build` after making changes to your TypeScript code. The server runs the compiled JavaScript code from the `build` directory, not the source `.ts` files.
+- **Test Thoroughly:** Test each tool, prompt, and resource individually before relying on them in your AI interactions. Verify inputs, outputs, and error handling.
 
 ## Development Workflow
 
@@ -115,12 +121,6 @@ You need to configure your AI assistant (like Claude Desktop or Cursor) to use t
 - Save the configuration file.
 - Restart Claude Desktop or Cursor for the changes to take effect.
 - Your MCP server should now be available to your AI assistant.
-
-## Development Guidelines
-
-- **Use the Cursor Rule:** When developing tools, prompts, or resources for this server, reference the `@mcp-general.mdc` Cursor rule. It contains detailed instructions, conventions, and code examples tailored for MCP server development. This will help ensure consistency and guide the AI assistant in generating correct code.
-- **Build Before Running:** Always run `npm run build` after making changes to your TypeScript code. The server runs the compiled JavaScript code from the `build` directory, not the source `.ts` files.
-- **Test Thoroughly:** Test each tool, prompt, and resource individually before relying on them in your AI interactions. Verify inputs, outputs, and error handling.
 
 ## Testing
 
