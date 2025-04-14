@@ -56,9 +56,10 @@ You need to configure your AI assistant (like Claude Desktop or Cursor) to use t
 
 #### Configuration with Claude Desktop
 
-1.  Open Claude Desktop settings.
-2.  Navigate to the "MCP Servers" section.
-3.  Add a new server configuration:
+1.  Open Claude Desktop.
+2.  Navigate to the settings.
+3.  Click on `developer`, then `edit config`
+4.  Then add the below code snippet into the json file.
 
 ```json
 {
@@ -78,8 +79,9 @@ You need to configure your AI assistant (like Claude Desktop or Cursor) to use t
 
 #### Configuration with Cursor
 
-1.  Locate your Cursor MCP configuration file (`mcp.json`). This is typically found in `~/.cursor/mcp.json` on macOS/Linux or `C:\Users\YourUser\.cursor\mcp.json` on Windows.
-2.  Add or update the entry for your server:
+1.  Locate your Cursor MCP configuration file (`mcp.json`). This is typically found in Cursor > settings.
+2.  Click on `Add a new global MCP server`
+2.  Add in the entry for your server:
 
 ```json
 {
